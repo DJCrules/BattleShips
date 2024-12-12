@@ -1,4 +1,6 @@
-﻿using System.Buffers;
+using System;
+using System.Buffers;
+using System.Linq;
 using System.Xml.Serialization;
 
 namespace BattleShips
@@ -7,11 +9,23 @@ namespace BattleShips
     {
         static void Main(string[] args)
         {
-            MenuScreen();
-            Intro();
+            
         }
 
         //Main Procedures
+        static SaveGame Initialise_Game(string[] players)
+        {
+            SaveGame game = new SaveGame(players);
+            for (int i = 0; i < 10; i++)
+            {
+                for (int j = 0; j < 10; j++)
+                {
+                    game.gameboard1[i, j] = '•';
+                    game.gameboard2[i, j] = '•';
+                }
+            }
+            return game;
+        }
         static string[] Intro()
         {
             title(20);
@@ -36,10 +50,11 @@ namespace BattleShips
                 ("==========Menu===========\n\n" +
                  "1. New Game\n" +
                  "2. Load Game\n" +
-                 "3. Exit\n\n");
+                 "3. Remove Save Game\n" +
+                 "4. Exit\n\n");
             Console.Write("Enter choice: ");
             string choice = Console.ReadLine();
-
+            //Secret choice 101 to wipe save games
             while (choice == "" | choice == null)
             {
                 Console.Clear();
@@ -53,6 +68,10 @@ namespace BattleShips
                 choice = Console.ReadLine();
             }
             return int.Parse(choice);
+        }
+        static void StartGame()
+        {
+
         }
 
         //Aesthetic Procedures
@@ -72,6 +91,20 @@ namespace BattleShips
             loadbar(n);
             Console.ForegroundColor = ConsoleColor.White;
         }
-        
+
+        //Filing Procedures
+        static void save_game(SaveGame game)
+        {
+
+        }
+    }
+    class SaveGame(string[] players)
+    {
+        public string player1 = players[0];
+        public string player2 = players[1];
+        public char[,] gameboard1 = new char[10, 10];
+        public char[,] gameboard2 = new char[10, 10];
+        bool started;
     }
 }
+
