@@ -1,6 +1,7 @@
 using System;
 using System.Buffers;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Xml.Serialization;
 
 namespace BattleShips
@@ -15,15 +16,18 @@ namespace BattleShips
         //Main Procedures
         static SaveGame Initialise_Game(string[] players)
         {
-            SaveGame game = new SaveGame(players);
-            for (int i = 0; i < 10; i++)
-            {
-                for (int j = 0; j < 10; j++)
+            SaveGame game = new SaveGame();
+            for (int n = 0; n < 2; n++) {
+                for (int i = 0; i < 10; i++)
                 {
-                    game.gameboard1[i, j] = '•';
-                    game.gameboard2[i, j] = '•';
+                    for (int j = 0; j < 10; j++)
+                    {
+                        game.gameboard[n, i, j] = '~';
+                    }
                 }
             }
+            game.started = false;
+            game.players = players;
             return game;
         }
         static string[] Intro()
@@ -74,6 +78,7 @@ namespace BattleShips
 
         }
 
+
         //Aesthetic Procedures
         static void loadbar(int length)
         {
@@ -91,20 +96,86 @@ namespace BattleShips
             loadbar(n);
             Console.ForegroundColor = ConsoleColor.White;
         }
+        static void show_board(SaveGame game, int boardnumber)
+        {
+            for (int i = 0; i < 10; i++)
+            {
+                for (int j = 0; j < 10; j++)
+                {
+                    Console.Write(game.gameboard[boardnumber + 1, i, j] + " ");
+                }
+                Console.WriteLine();
+            }
+            Console.WriteLine();
+        }
 
         //Filing Procedures
-        static void save_game(SaveGame game)
+        static int save_game(SaveGame game)
         {
+            int filenumber = 0;
+            // Stored in the bin/Debug folder by default
+            string filename = $"SaveGame{filenumber}.bin";
 
+            while (File.Exists(filename))
+            {
+                filenumber ++;
+                filename = $"SaveGame{filenumber}.bin";
+            }
+
+            // Declare and initialise a BinaryWriter in Create mode
+            using (BinaryWriter writer = new BinaryWriter(File.Open(filename, FileMode.Create)))
+            {
+                // Write each value of the Item object to the binary file
+                for (int n = 0; n < 2; n++) 
+                {
+                    for (int i = 0; i < 10; i++)
+                    {
+                        for (int j = 0; j < 10; j++)
+                        {
+                            writer.Write(game.gameboard[n, i, j]);
+                        }
+                    }
+                }
+                foreach (string player in game.players)
+                {
+                    writer.Write(player);
+                }
+                writer.Write(game.started);
+            }
+            return filenumber;
+        }
+        static SaveGame load_game(int game_number)
+        {
+            string filename = $"SaveGame{game_number}.bin";
+            using (BinaryReader reader = new BinaryReader(File.Open(filename, FileMode.Open)))
+            {
+                // Declare an Item object of type SaveGame
+                SaveGame game = new SaveGame();
+
+                // Read each value of the game object from the binary file
+                for (int n = 0; n < 2; n++)
+                {
+                    for (int i = 0;i < 10; i++)
+                    {
+                        for (int j = 0;j < 10; j++)
+                        {
+                            game.gameboard[n, i, j] = reader.ReadChar();
+                        }
+                    }
+                }
+                for (int n = 0; n < 2; n++) { game.players[n] = reader.ReadString(); }
+                game.started = reader.ReadBoolean();
+
+                // Return the game object
+                return game;
+            }
         }
     }
-    class SaveGame(string[] players)
+    class SaveGame()
     {
-        public string player1 = players[0];
-        public string player2 = players[1];
-        public char[,] gameboard1 = new char[10, 10];
-        public char[,] gameboard2 = new char[10, 10];
-        bool started;
+        public string[] players = new string[2];
+        public char[,,] gameboard = new char[2, 10, 10];
+        public bool started;
     }
 }
 
