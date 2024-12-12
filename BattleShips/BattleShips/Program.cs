@@ -10,14 +10,15 @@ namespace BattleShips
     {
         static void Main(string[] args)
         {
-            
+
         }
 
         //Main Procedures
         static SaveGame Initialise_Game(string[] players)
         {
             SaveGame game = new SaveGame();
-            for (int n = 0; n < 2; n++) {
+            for (int n = 0; n < 2; n++)
+            {
                 for (int i = 0; i < 10; i++)
                 {
                     for (int j = 0; j < 10; j++)
@@ -102,7 +103,7 @@ namespace BattleShips
             {
                 for (int j = 0; j < 10; j++)
                 {
-                    Console.Write(game.gameboard[boardnumber + 1, i, j] + " ");
+                    Console.Write(game.gameboard[boardnumber - 1, i, j] + " ");
                 }
                 Console.WriteLine();
             }
@@ -118,7 +119,7 @@ namespace BattleShips
 
             while (File.Exists(filename))
             {
-                filenumber ++;
+                filenumber++;
                 filename = $"SaveGame{filenumber}.bin";
             }
 
@@ -126,7 +127,7 @@ namespace BattleShips
             using (BinaryWriter writer = new BinaryWriter(File.Open(filename, FileMode.Create)))
             {
                 // Write each value of the Item object to the binary file
-                for (int n = 0; n < 2; n++) 
+                for (int n = 0; n < 2; n++)
                 {
                     for (int i = 0; i < 10; i++)
                     {
@@ -155,9 +156,9 @@ namespace BattleShips
                 // Read each value of the game object from the binary file
                 for (int n = 0; n < 2; n++)
                 {
-                    for (int i = 0;i < 10; i++)
+                    for (int i = 0; i < 10; i++)
                     {
-                        for (int j = 0;j < 10; j++)
+                        for (int j = 0; j < 10; j++)
                         {
                             game.gameboard[n, i, j] = reader.ReadChar();
                         }
@@ -168,6 +169,17 @@ namespace BattleShips
 
                 // Return the game object
                 return game;
+            }
+        }
+        static void clear_games()
+        {
+            int filenumber = 0;
+            string filename = $"SaveGame{filenumber}.bin";
+            while (File.Exists(filename))
+            {
+                File.Delete(filename);
+                filenumber++;
+                filename = $"SaveGame{filenumber}.bin";
             }
         }
     }
