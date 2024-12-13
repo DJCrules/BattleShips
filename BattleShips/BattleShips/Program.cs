@@ -1,8 +1,11 @@
 using System;
 using System.Buffers;
+using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Xml.Serialization;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BattleShips
 {
@@ -10,7 +13,11 @@ namespace BattleShips
     {
         static void Main(string[] args)
         {
-
+            clear_games();
+            SaveGame newgame = Initialise_Game(["joe", "jam"]);
+            show_board(newgame, 1);
+            newgame.gameboard[0, 1, 1] = '|';
+            show_board(newgame, 1);
         }
 
         //Main Procedures
@@ -80,6 +87,36 @@ namespace BattleShips
         }
 
 
+        //Gameplay Procedures
+        static void StageOne(SaveGame game)
+        {
+            if (game.started) { StageTwo(game); }
+
+        }
+        static void StageTwo(SaveGame game)
+        {
+            if (!game.started) { StageOne(game); }
+        }
+        static SaveGame computer_turn(SaveGame game)
+        {
+            if (!game.started) { StageOne(game); }
+
+            return game;
+        }
+        static SaveGame player_turn(SaveGame game, int player)
+        {
+            if (!game.started) { StageOne(game); }
+
+            title(0);
+            show_board(game, player);
+            Console.Write("\nAim for eg.h2:  ");
+            string pos = Console.ReadLine();
+
+            game.gameboard[player - 1, GetAlphabetNumber(pos[0]), pos[1]] = '○'; 
+            return game;
+        }
+
+
         //Aesthetic Procedures
         static void loadbar(int length)
         {
@@ -99,16 +136,18 @@ namespace BattleShips
         }
         static void show_board(SaveGame game, int boardnumber)
         {
+            Console.WriteLine("   1 2 3 4 5 6 7 8 9 0");
             for (int i = 0; i < 10; i++)
             {
+                Console.Write(GetAlphabetLetter(i + 1) + "  ");
                 for (int j = 0; j < 10; j++)
                 {
                     Console.Write(game.gameboard[boardnumber - 1, i, j] + " ");
                 }
-                Console.WriteLine();
+                Console.Write("\n");
             }
-            Console.WriteLine();
         }
+
 
         //Filing Procedures
         static int save_game(SaveGame game)
@@ -181,6 +220,41 @@ namespace BattleShips
                 filenumber++;
                 filename = $"SaveGame{filenumber}.bin";
             }
+        }
+        static List<string> fetch_games()
+        {
+            string fullpath = """C:\\Users\\dylan\\Documents\\GitHub\\BattleShips\\BattleShips\\BattleShips\\bin\\Debug\\net8.0""";
+            string[] files = Directory.GetFiles(fullpath);
+            List<string> names = new List<string>();
+            foreach (string file in files)
+            {
+                FileInfo fi = new FileInfo(file);
+                if (fi.Extension == ".bin")
+                    names.Add(fi.Name);
+            }
+            return names;
+        }
+
+        //Other Procedures
+        static string GetAlphabetLetter(int number)
+        {
+            if (number < 1 || number > 25)
+            {
+                return "Invalid input";
+            }
+
+            char letter = (char)('a' + (number - 1));
+            return letter.ToString();
+        }
+        static int GetAlphabetNumber(char letter)
+        {
+            if (letter < 'a' || letter > 'z')
+            {
+                return 30;
+            }
+
+            int number = (letter - 'a') + 1;
+            return number;
         }
     }
     class SaveGame()
