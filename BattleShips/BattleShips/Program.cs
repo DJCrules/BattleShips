@@ -16,7 +16,7 @@ namespace BattleShips
             clear_games();
             SaveGame newgame = Initialise_Game(["joe", "jam"]);
             show_board(newgame, 1);
-            newgame.gameboard[0, 1, 1] = '|';
+            newgame = hit_square(newgame, 1, 2, 3);
             show_board(newgame, 1);
         }
 
@@ -109,10 +109,17 @@ namespace BattleShips
 
             title(0);
             show_board(game, player);
-            Console.Write("\nAim for eg.h2:  ");
+            Console.Write("\nAim for:  ");
+
             string pos = Console.ReadLine();
 
-            game.gameboard[player - 1, GetAlphabetNumber(pos[0]), pos[1]] = '○'; 
+
+
+            return game;
+        }
+        static SaveGame hit_square(SaveGame game, int n, int i, int j)
+        {
+            game.gameboard[n - 1, i, j] = 'X';
             return game;
         }
 
