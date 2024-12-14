@@ -12,3 +12,18 @@ C:\Users\phili\OneDrive\Desktop\C# Projects\BattlsShips\BattleShips\BattleShips\
 C:\Users\phili\OneDrive\Desktop\C# Projects\BattlsShips\BattleShips\BattleShips\obj\Debug\net8.0\BattleShips.pdb
 C:\Users\phili\OneDrive\Desktop\C# Projects\BattlsShips\BattleShips\BattleShips\obj\Debug\net8.0\BattleShips.genruntimeconfig.cache
 C:\Users\phili\OneDrive\Desktop\C# Projects\BattlsShips\BattleShips\BattleShips\obj\Debug\net8.0\ref\BattleShips.dll
+C:\Users\dylan\Documents\GitHub\BattleShips\BattleShips\BattleShips\bin\Debug\net8.0\BattleShips.exe
+C:\Users\dylan\Documents\GitHub\BattleShips\BattleShips\BattleShips\bin\Debug\net8.0\BattleShips.deps.json
+C:\Users\dylan\Documents\GitHub\BattleShips\BattleShips\BattleShips\bin\Debug\net8.0\BattleShips.runtimeconfig.json
+C:\Users\dylan\Documents\GitHub\BattleShips\BattleShips\BattleShips\bin\Debug\net8.0\BattleShips.dll
+C:\Users\dylan\Documents\GitHub\BattleShips\BattleShips\BattleShips\bin\Debug\net8.0\BattleShips.pdb
+C:\Users\dylan\Documents\GitHub\BattleShips\BattleShips\BattleShips\obj\Debug\net8.0\BattleShips.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\dylan\Documents\GitHub\BattleShips\BattleShips\BattleShips\obj\Debug\net8.0\BattleShips.AssemblyInfoInputs.cache
+C:\Users\dylan\Documents\GitHub\BattleShips\BattleShips\BattleShips\obj\Debug\net8.0\BattleShips.AssemblyInfo.cs
+C:\Users\dylan\Documents\GitHub\BattleShips\BattleShips\BattleShips\obj\Debug\net8.0\BattleShips.csproj.CoreCompileInputs.cache
+C:\Users\dylan\Documents\GitHub\BattleShips\BattleShips\BattleShips\obj\Debug\net8.0\BattleShips.sourcelink.json
+C:\Users\dylan\Documents\GitHub\BattleShips\BattleShips\BattleShips\obj\Debug\net8.0\BattleShips.dll
+C:\Users\dylan\Documents\GitHub\BattleShips\BattleShips\BattleShips\obj\Debug\net8.0\refint\BattleShips.dll
+C:\Users\dylan\Documents\GitHub\BattleShips\BattleShips\BattleShips\obj\Debug\net8.0\BattleShips.pdb
+C:\Users\dylan\Documents\GitHub\BattleShips\BattleShips\BattleShips\obj\Debug\net8.0\BattleShips.genruntimeconfig.cache
+C:\Users\dylan\Documents\GitHub\BattleShips\BattleShips\BattleShips\obj\Debug\net8.0\ref\BattleShips.dll

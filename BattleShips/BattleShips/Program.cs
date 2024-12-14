@@ -113,13 +113,18 @@ namespace BattleShips
 
             string pos = Console.ReadLine();
 
-
-
             return game;
         }
         static SaveGame hit_square(SaveGame game, int n, int i, int j)
         {
-            game.gameboard[n - 1, i, j] = 'X';
+            if (game.gameboard[n - 1, i, j] == '~')
+            {
+                game.gameboard[n - 1, i, j] = 'X';
+            }
+            if (game.gameboard[n - 1, i, j] == '@')
+            {
+                game.gameboard[n - 1, i, j] = '!';
+            }
             return game;
         }
 

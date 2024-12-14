@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\phili\\OneDrive\\Desktop\\C# Projects\\BattlsShips\\BattleShips\\BattleShips\\BattleShips.csproj": {}
+    "C:\\Users\\dylan\\Documents\\GitHub\\BattleShips\\BattleShips\\BattleShips\\BattleShips.csproj": {}
   },
   "projects": {
-    "C:\\Users\\phili\\OneDrive\\Desktop\\C# Projects\\BattlsShips\\BattleShips\\BattleShips\\BattleShips.csproj": {
+    "C:\\Users\\dylan\\Documents\\GitHub\\BattleShips\\BattleShips\\BattleShips\\BattleShips.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\phili\\OneDrive\\Desktop\\C# Projects\\BattlsShips\\BattleShips\\BattleShips\\BattleShips.csproj",
+        "projectUniqueName": "C:\\Users\\dylan\\Documents\\GitHub\\BattleShips\\BattleShips\\BattleShips\\BattleShips.csproj",
         "projectName": "BattleShips",
-        "projectPath": "C:\\Users\\phili\\OneDrive\\Desktop\\C# Projects\\BattlsShips\\BattleShips\\BattleShips\\BattleShips.csproj",
-        "packagesPath": "C:\\Users\\phili\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\phili\\OneDrive\\Desktop\\C# Projects\\BattlsShips\\BattleShips\\BattleShips\\obj\\",
+        "projectPath": "C:\\Users\\dylan\\Documents\\GitHub\\BattleShips\\BattleShips\\BattleShips\\BattleShips.csproj",
+        "packagesPath": "C:\\Users\\dylan\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\dylan\\Documents\\GitHub\\BattleShips\\BattleShips\\BattleShips\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\phili\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\dylan\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -22,7 +22,6 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -61,7 +60,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.403/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.400/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
