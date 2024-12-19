@@ -13,8 +13,10 @@ namespace BattleShips
     {
         static void Main(string[] args)
         {
-            clear_games();
-            StartGame();
+            while (true)
+            {
+                Do_Choice(MenuScreen());
+            }
         }
 
         //Main Procedures
@@ -67,8 +69,8 @@ namespace BattleShips
             // 3 remove an old game
             // 4 exit from the game
             // 101 secret choice to wipe save games
-
-            title(50);
+            Console.Clear ();
+            title(25);
             string choice = "";
             while (choice == "" | choice == null)
             {
@@ -76,6 +78,7 @@ namespace BattleShips
                 title(0);
                 Console.WriteLine
                 ("==========Menu===========\n\n" +
+                 "0. Show Instructions\n" +
                  "1. New Game\n" +
                  "2. Load Game\n" +
                  "3. Remove Save Game\n" +
@@ -84,6 +87,38 @@ namespace BattleShips
                 choice = Console.ReadLine();
             }
             return int.Parse(choice);
+        }
+        static void Do_Choice(int choice)
+        {
+            switch (choice)
+            {
+                case 0:
+                    Instructions();
+                    break;
+                case 1:
+                    StartGame();
+                    break;
+                case 2:
+                    List<string> games = fetch_games();
+                    foreach (string game in games)
+                    {
+                        Console.WriteLine(game);
+                    }
+                    Console.Write("\n\nWhich game number? ");
+                    stage_one(load_game(int.Parse(Console.ReadLine())));
+                    break;
+                case 3:
+                    break;
+                case 4:
+                    title(100);
+                    System.Environment.Exit(0);
+                    break;
+                case 101:
+                    Console.WriteLine("Are you sure???");
+                    if (Console.ReadLine() == "yes")
+                    { clear_games(); }
+                    break;
+            }
         }
         static SaveGame StartGame()
         {
@@ -95,7 +130,8 @@ namespace BattleShips
         }
         static void Instructions()
         {
-            title(0);
+            Console.Clear();
+            title(20);
             Console.WriteLine(
                 "Battleships is a game in which both you and your opponent have ships in your friendly waters\n" +
                 "You can only see your friendly waters but you can attempt to strateigically bomb the enemy boats\n" +
@@ -168,13 +204,20 @@ namespace BattleShips
             }
             return game;
         }
-        static int[] pos_to_int(string pos)
-        {
-            return [GetAlphabetNumber(pos[0]), GetAlphabetNumber(pos[1])];
-        }
         static SaveGame place_boats(SaveGame game, int player)
         {
-            show_board (game, player);
+            string pos = "";
+            while (!is_valid(pos))
+            {
+                Console.Clear();
+                title(30);
+                show_board(game, player);
+                Console.WriteLine(
+                    "Placing dingy (1 tile)\n\n" +
+                    "Enter Coordinates for boat: ");
+                pos = Console.ReadLine();
+            }
+            
             return game;
         }
 
@@ -191,6 +234,7 @@ namespace BattleShips
         }
         static void title(int n = 0)
         {
+            Console.Clear();
             Console.ForegroundColor = ConsoleColor.Blue;
             Console.WriteLine(" ______  ______  ______ ______ __      ______    \r\n/\\  == \\/\\  __ \\/\\__  _/\\__  _/\\ \\    /\\  ___\\   \r\n\\ \\  __<\\ \\  __ \\/_/\\ \\\\/_/\\ \\\\ \\ \\___\\ \\  __\\   \r\n \\ \\_____\\ \\_\\ \\_\\ \\ \\_\\  \\ \\_\\\\ \\_____\\ \\_____\\ \r\n  \\/_____/\\/_/\\/_/  \\/_/   \\/_/ \\/_____/\\/_____/ \r\n                                                 \r\n       ______  __  __  __  ______ ______         \r\n      /\\  ___\\/\\ \\_\\ \\/\\ \\/\\  == /\\  ___\\        \r\n      \\ \\___  \\ \\  __ \\ \\ \\ \\  _-\\ \\___  \\       \r\n       \\/\\_____\\ \\_\\ \\_\\ \\_\\ \\_\\  \\/\\_____\\      \r\n        \\/_____/\\/_/\\/_/\\/_/\\/_/   \\/_____/  \n\n", Console.ForegroundColor);
             loadbar(n);
@@ -319,6 +363,34 @@ namespace BattleShips
             {
                 return letter;
             }
+        }
+        public static bool is_valid(string pos)
+        {
+            if (string.IsNullOrEmpty(pos) || pos.Length < 2 || pos.Length > 3)
+            {
+                return false;
+            }
+
+            char row = char.ToUpper(pos[0]);
+            string columnPart = pos.Substring(1);
+
+            // Check if row is within 'A' to 'J'
+            if (row < 'A' || row > 'J')
+            {
+                return false;
+            }
+
+            // Check if column is a valid integer and within 1 to 10
+            if (!int.TryParse(columnPart, out int column) || column < 1 || column > 10)
+            {
+                return false;
+            }
+
+            return true;
+        }
+        static int[] pos_to_int(string pos)
+        {
+            return [GetAlphabetNumber(pos[0]), GetAlphabetNumber(pos[1])];
         }
     }
     class SaveGame()
