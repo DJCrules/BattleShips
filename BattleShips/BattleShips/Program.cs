@@ -14,10 +14,7 @@ namespace BattleShips
         static void Main(string[] args)
         {
             clear_games();
-            SaveGame newgame = Initialise_Game(["joe", "jam"]);
-            show_board(newgame, 1);
-            newgame = hit_square(newgame, 1, 2, 3);
-            show_board(newgame, 1);
+            StartGame();
         }
 
         //Main Procedures
@@ -40,7 +37,13 @@ namespace BattleShips
         }
         static string[] Intro()
         {
+            Console.Clear();
             title(20);
+            Console.WriteLine(
+                "Enter player names, if you would like \n" +
+                "to play against a computer, call one of \n" +
+                "the players 'computer'");
+
             Console.Write("\n\nEnter First Player: ", Console.ForegroundColor);
             string? player1 = Console.ReadLine();
             Console.Write("\nEnter Second Player: ");
@@ -57,16 +60,16 @@ namespace BattleShips
         }
         static int MenuScreen()
         {
+            // Show the user a menu of the following options:
+            // 0 read instructions
+            // 1 create a new game
+            // 2 load an old game
+            // 3 remove an old game
+            // 4 exit from the game
+            // 101 secret choice to wipe save games
+
             title(50);
-            Console.WriteLine
-                ("==========Menu===========\n\n" +
-                 "1. New Game\n" +
-                 "2. Load Game\n" +
-                 "3. Remove Save Game\n" +
-                 "4. Exit\n\n");
-            Console.Write("Enter choice: ");
-            string choice = Console.ReadLine();
-            //Secret choice 101 to wipe save games
+            string choice = "";
             while (choice == "" | choice == null)
             {
                 Console.Clear();
@@ -75,44 +78,82 @@ namespace BattleShips
                 ("==========Menu===========\n\n" +
                  "1. New Game\n" +
                  "2. Load Game\n" +
-                 "3. Exit\n\n");
+                 "3. Remove Save Game\n" +
+                 "4. Exit\n\n");
                 Console.Write("Enter choice: ");
                 choice = Console.ReadLine();
             }
             return int.Parse(choice);
         }
-        static void StartGame()
+        static SaveGame StartGame()
         {
-
+            title(20);
+            Console.WriteLine("\nLoading Game...");
+            SaveGame newgame = Initialise_Game(Intro());
+            newgame = stage_one(newgame);
+            return newgame;
+        }
+        static void Instructions()
+        {
+            title(0);
+            Console.WriteLine(
+                "Battleships is a game in which both you and your opponent have ships in your friendly waters\n" +
+                "You can only see your friendly waters but you can attempt to strateigically bomb the enemy boats\n" +
+                "The first player to have successfully bombed and sunk all of the enemy boats wins the game\n\n" +
+                "You can play against a computer if you want, the easy mode is entirely random, and the harder\n" +
+                "mode uses a simple algorithm.");
+            Console.Write("\n\nGood luck, press enter to return to the menu.");
+            Console.ReadLine();
         }
 
 
         //Gameplay Procedures
-        static void StageOne(SaveGame game)
+        static SaveGame stage_one(SaveGame game)
         {
-            if (game.started) { StageTwo(game); }
+            if (game.started) { stage_two(game); }
 
+            if (game.players[0] != "computer")
+            {
+                place_boats(game, 1);
+            }
+
+            game.started = true;
+            return game;
         }
-        static void StageTwo(SaveGame game)
+        static void stage_two(SaveGame game)
         {
-            if (!game.started) { StageOne(game); }
+            if (!game.started) { stage_one(game); }
+
+            if (game.players[0] == "computer")
+            {
+                game = computer_turn(game);
+            }
+            else
+            {
+                game = player_turn(game, 1);
+            }
         }
         static SaveGame computer_turn(SaveGame game)
         {
-            if (!game.started) { StageOne(game); }
+            if (!game.started) { stage_one(game); }
 
             return game;
         }
         static SaveGame player_turn(SaveGame game, int player)
         {
-            if (!game.started) { StageOne(game); }
+            if (!game.started) { stage_one(game); }
 
             title(0);
             show_board(game, player);
             Console.Write("\nAim for:  ");
 
-            string pos = Console.ReadLine();
+            int[] pos = pos_to_int(Console.ReadLine());
 
+            hit_square(game, player, pos[0], pos[1]);
+
+            show_board(game, player);
+
+            game.turn++;
             return game;
         }
         static SaveGame hit_square(SaveGame game, int n, int i, int j)
@@ -127,9 +168,18 @@ namespace BattleShips
             }
             return game;
         }
+        static int[] pos_to_int(string pos)
+        {
+            return [GetAlphabetNumber(pos[0]), GetAlphabetNumber(pos[1])];
+        }
+        static SaveGame place_boats(SaveGame game, int player)
+        {
+            show_board (game, player);
+            return game;
+        }
 
 
-        //Aesthetic Procedures
+        //Pretty Procedures
         static void loadbar(int length)
         {
             for (int i = 0; i < 50; i++)
@@ -146,7 +196,7 @@ namespace BattleShips
             loadbar(n);
             Console.ForegroundColor = ConsoleColor.White;
         }
-        static void show_board(SaveGame game, int boardnumber)
+        static void show_board(SaveGame game, int player)
         {
             Console.WriteLine("   1 2 3 4 5 6 7 8 9 0");
             for (int i = 0; i < 10; i++)
@@ -154,7 +204,7 @@ namespace BattleShips
                 Console.Write(GetAlphabetLetter(i + 1) + "  ");
                 for (int j = 0; j < 10; j++)
                 {
-                    Console.Write(game.gameboard[boardnumber - 1, i, j] + " ");
+                    Console.Write(game.gameboard[player - 1, i, j] + " ");
                 }
                 Console.Write("\n");
             }
@@ -247,6 +297,7 @@ namespace BattleShips
             return names;
         }
 
+
         //Other Procedures
         static string GetAlphabetLetter(int number)
         {
@@ -260,17 +311,19 @@ namespace BattleShips
         }
         static int GetAlphabetNumber(char letter)
         {
-            if (letter < 'a' || letter > 'z')
+            if (char.IsLetter(letter))
             {
-                return 30;
+                return (letter - 'a') + 1;
             }
-
-            int number = (letter - 'a') + 1;
-            return number;
+            else
+            {
+                return letter;
+            }
         }
     }
     class SaveGame()
     {
+        public int turn = 0;
         public string[] players = new string[2];
         public char[,,] gameboard = new char[2, 10, 10];
         public bool started;
