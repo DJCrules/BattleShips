@@ -95,24 +95,51 @@ namespace BattleShips
                 case 0:
                     Instructions();
                     break;
+
                 case 1:
                     StartGame();
-                    break;
+                    break;               
+
                 case 2:
                     List<string> games = fetch_games();
-                    foreach (string game in games)
+                    if (games != null)
                     {
-                        Console.WriteLine(game);
+                        foreach (string game in games)
+                        {
+                            Console.WriteLine(game);
+                        }
+                        Console.Write("\n\nWhich game number to play? ");
+                        stage_one(load_game(int.Parse(Console.ReadLine())));
                     }
-                    Console.Write("\n\nWhich game number? ");
-                    stage_one(load_game(int.Parse(Console.ReadLine())));
+                    else
+                    {
+                        Console.WriteLine("No saved games");
+                        Console.ReadLine();
+                    }
                     break;
+
                 case 3:
+                    games = fetch_games();
+                    if (games != null)
+                    {
+                        foreach (string game in games)
+                        {
+                            Console.WriteLine(game);
+                        }
+                        Console.Write("\n\nWhich game to delete? ");
+                        File.Delete(Console.ReadLine());
+                    }
+                    else
+                    {
+                        Console.WriteLine("No saved games");
+                        Console.ReadLine();
+                    }
                     break;
+
                 case 4:
-                    title(100);
                     System.Environment.Exit(0);
                     break;
+
                 case 101:
                     Console.WriteLine("Are you sure???");
                     if (Console.ReadLine() == "yes")
@@ -256,17 +283,10 @@ namespace BattleShips
 
 
         //Filing Procedures
-        static int save_game(SaveGame game)
+        static int save_game(SaveGame game, int filenumber)
         {
-            int filenumber = 0;
             // Stored in the bin/Debug folder by default
             string filename = $"SaveGame{filenumber}.bin";
-
-            while (File.Exists(filename))
-            {
-                filenumber++;
-                filename = $"SaveGame{filenumber}.bin";
-            }
 
             // Declare and initialise a BinaryWriter in Create mode
             using (BinaryWriter writer = new BinaryWriter(File.Open(filename, FileMode.Create)))
@@ -340,6 +360,19 @@ namespace BattleShips
             }
             return names;
         }
+        static int new_game(string[] players)
+        {
+            SaveGame game = Initialise_Game(players);
+            int filenumber = 0;
+            string filename = $"SaveGame{filenumber}.bin";
+
+            while (File.Exists(filename))
+            {
+                filenumber++;
+            }
+            save_game(game, filenumber);
+            return filenumber;
+        }
 
 
         //Other Procedures
@@ -401,4 +434,3 @@ namespace BattleShips
         public bool started;
     }
 }
-
