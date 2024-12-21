@@ -101,18 +101,24 @@ namespace BattleShips
 
                 case 1:
                     StartGame();
-                    break;               
+                    break;
+
 
                 case 2:
                     List<string> games = fetch_games();
                     if (games != null)
                     {
+                        Console.WriteLine();
                         foreach (string game in games)
                         {
                             Console.WriteLine(game);
                         }
                         Console.Write("\n\nWhich game number to play? ");
-                        stage_one(load_game(int.Parse(Console.ReadLine())));
+                        string game_number = Console.ReadLine();
+                        if (game_number != null)
+                        {
+                            stage_one(load_game(int.Parse(game_number)));
+                        }
                     }
                     else
                     {
@@ -123,18 +129,23 @@ namespace BattleShips
 
                 case 3:
                     games = fetch_games();
-                    if (games != null)
+                    if (games.Any())
                     {
+                        Console.WriteLine();
                         foreach (string game in games)
                         {
                             Console.WriteLine(game);
                         }
-                        Console.Write("\n\nWhich game to delete? ");
-                        File.Delete(Console.ReadLine());
+                        Console.Write("\n\nWhich game number to delete? ");
+                        string game_number = Console.ReadLine();
+                        if (game_number != null)
+                        {
+                            File.Delete($"SaveGame{game_number}.bin");
+                        }
                     }
                     else
                     {
-                        Console.WriteLine("No saved games");
+                        Console.WriteLine("\nNo saved games");
                         Console.ReadLine();
                     }
                     break;
@@ -249,6 +260,21 @@ namespace BattleShips
                 pos = Console.ReadLine();
             }
             
+            return game;
+        }
+        static SaveGame place_boat(SaveGame game, int player, int i, int j, int length, bool up)
+        {
+            for (int k = 0; k < length; k++)
+            {
+                if (up)
+                {
+                    game.gameboard[player - 1, i + k, j] = '@';
+                }
+                if (!up)
+                {
+                    game.gameboard[player - 1, i, j + k] = '@';
+                }
+            }
             return game;
         }
 
@@ -429,7 +455,7 @@ namespace BattleShips
         }
         static int[] pos_to_int(string pos)
         {
-            return [GetAlphabetNumber(pos[0]), GetAlphabetNumber(pos[1])];
+            return [GetAlphabetNumber(pos[0]), pos[1]];
         }
     }
     class SaveGame()
