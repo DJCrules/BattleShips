@@ -222,15 +222,15 @@ namespace BattleShips
             game.turn++;
             return game;
         }
-        static SaveGame hit_square(SaveGame game, int n, int i, int j)
+        static SaveGame hit_square(SaveGame game, int board, int i, int j)
         {
-            if (game.gameboard[n - 1, i, j] == '~')
+            if (game.gameboard[board - 1, i, j] == '~')
             {
-                game.gameboard[n - 1, i, j] = 'X';
+                game.gameboard[board - 1, i, j] = 'X';
             }
-            if (game.gameboard[n - 1, i, j] == '@')
+            if (game.gameboard[board - 1, i, j] == '@')
             {
-                game.gameboard[n - 1, i, j] = '!';
+                game.gameboard[board - 1, i, j] = '!';
             }
             return game;
         }
