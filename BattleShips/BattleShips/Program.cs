@@ -20,9 +20,11 @@ namespace BattleShips
         }
 
         //Main Procedures
-        static SaveGame Initialise_Game(string[] players)
+        static SaveGame Initialise_Game(string[] players, int ID)
         {
+            //Making a clean board
             SaveGame game = new SaveGame();
+            game.turn = 0;
             for (int n = 0; n < 2; n++)
             {
                 for (int i = 0; i < 10; i++)
@@ -35,6 +37,7 @@ namespace BattleShips
             }
             game.started = false;
             game.players = players;
+            game.ID = ID;
             return game;
         }
         static string[] Intro()
@@ -149,9 +152,7 @@ namespace BattleShips
         }
         static SaveGame StartGame()
         {
-            title(20);
-            Console.WriteLine("\nLoading Game...");
-            SaveGame newgame = Initialise_Game(Intro());
+            SaveGame newgame = new_game(Intro());
             newgame = stage_one(newgame);
             return newgame;
         }
@@ -181,9 +182,10 @@ namespace BattleShips
             }
 
             game.started = true;
+            game = stage_two(game);
             return game;
         }
-        static void stage_two(SaveGame game)
+        static SaveGame stage_two(SaveGame game)
         {
             if (!game.started) { stage_one(game); }
 
@@ -195,6 +197,7 @@ namespace BattleShips
             {
                 game = player_turn(game, 1);
             }
+            return game;
         }
         static SaveGame computer_turn(SaveGame game)
         {
@@ -233,6 +236,7 @@ namespace BattleShips
         }
         static SaveGame place_boats(SaveGame game, int player)
         {
+            //ask the user to place boats
             string pos = "";
             while (!is_valid(pos))
             {
@@ -283,14 +287,15 @@ namespace BattleShips
 
 
         //Filing Procedures
-        static int save_game(SaveGame game, int filenumber)
+        static void save_game(SaveGame game)
         {
             // Stored in the bin/Debug folder by default
-            string filename = $"SaveGame{filenumber}.bin";
+            string filename = $"SaveGame{game.ID}.bin";
 
             // Declare and initialise a BinaryWriter in Create mode
             using (BinaryWriter writer = new BinaryWriter(File.Open(filename, FileMode.Create)))
             {
+                writer.Write(game.turn);
                 // Write each value of the Item object to the binary file
                 for (int n = 0; n < 2; n++)
                 {
@@ -307,8 +312,8 @@ namespace BattleShips
                     writer.Write(player);
                 }
                 writer.Write(game.started);
+                writer.Write(game.ID);
             }
-            return filenumber;
         }
         static SaveGame load_game(int game_number)
         {
@@ -318,6 +323,7 @@ namespace BattleShips
                 // Declare an Item object of type SaveGame
                 SaveGame game = new SaveGame();
 
+                game.turn = reader.ReadUInt16();
                 // Read each value of the game object from the binary file
                 for (int n = 0; n < 2; n++)
                 {
@@ -331,7 +337,7 @@ namespace BattleShips
                 }
                 for (int n = 0; n < 2; n++) { game.players[n] = reader.ReadString(); }
                 game.started = reader.ReadBoolean();
-
+                game.ID = reader.ReadUInt16();
                 // Return the game object
                 return game;
             }
@@ -360,18 +366,18 @@ namespace BattleShips
             }
             return names;
         }
-        static int new_game(string[] players)
+        static SaveGame new_game(string[] players)
         {
-            SaveGame game = Initialise_Game(players);
-            int filenumber = 0;
-            string filename = $"SaveGame{filenumber}.bin";
+            int ID = 0;
+            string filename = $"SaveGame{ID}.bin";
 
             while (File.Exists(filename))
             {
-                filenumber++;
+                ID++;
             }
-            save_game(game, filenumber);
-            return filenumber;
+            SaveGame game = Initialise_Game(players, ID);
+            save_game(game);
+            return game;
         }
 
 
@@ -432,5 +438,6 @@ namespace BattleShips
         public string[] players = new string[2];
         public char[,,] gameboard = new char[2, 10, 10];
         public bool started;
+        public int ID;
     }
 }
