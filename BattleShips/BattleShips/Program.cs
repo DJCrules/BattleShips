@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
+using System.Runtime.ExceptionServices;
 using System.Xml.Serialization;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -13,10 +14,10 @@ namespace BattleShips
     {
         static void Main(string[] args)
         {
-            while (true)
-            {
-                Do_Choice(MenuScreen());
-            }
+            //while (true) { Do_Choice(MenuScreen()); }
+
+            SaveGame game = Initialise_Game(["", ""], 1);
+            place_boats(game, 1);
         }
 
         //Main Procedures
@@ -95,18 +96,26 @@ namespace BattleShips
         {
             switch (choice)
             {
+                //Instructions
                 case 0:
                     Instructions();
                     break;
 
+                //Start a new game
                 case 1:
-                    StartGame();
+                    SaveGame newgame = new_game(Intro());
+                    newgame = stage_one(newgame);
+                    save_game(newgame);
+                    Console.Clear();
+                    title(10);
+                    Console.WriteLine($"\nSaved game as SaveGame{newgame.ID}.bin\n\nPress enter to return to menu");
+                    Console.ReadLine();
                     break;
 
-
+                //Load an old game
                 case 2:
                     List<string> games = fetch_games();
-                    if (games != null)
+                    if (games.Any())
                     {
                         Console.WriteLine();
                         foreach (string game in games)
@@ -127,6 +136,7 @@ namespace BattleShips
                     }
                     break;
 
+                //Delete an old game
                 case 3:
                     games = fetch_games();
                     if (games.Any())
@@ -150,22 +160,18 @@ namespace BattleShips
                     }
                     break;
 
+                //Exit
                 case 4:
                     System.Environment.Exit(0);
                     break;
 
+                //Clear all games (secret)
                 case 101:
                     Console.WriteLine("Are you sure???");
                     if (Console.ReadLine() == "yes")
                     { clear_games(); }
                     break;
             }
-        }
-        static SaveGame StartGame()
-        {
-            SaveGame newgame = new_game(Intro());
-            newgame = stage_one(newgame);
-            return newgame;
         }
         static void Instructions()
         {
@@ -191,6 +197,7 @@ namespace BattleShips
             {
                 place_boats(game, 1);
             }
+            if (game.players[1] != "computer")
 
             game.started = true;
             game = stage_two(game);
@@ -227,7 +234,7 @@ namespace BattleShips
             int[] pos = pos_to_int(Console.ReadLine());
 
             hit_square(game, player, pos[0], pos[1]);
-
+                                   
             show_board(game, player);
 
             game.turn++;
@@ -247,32 +254,59 @@ namespace BattleShips
         }
         static SaveGame place_boats(SaveGame game, int player)
         {
-            //ask the user to place boats
-            string pos = "";
+            //ask the user to place dingy
+            place_boat(game, player, 1, "dingy");
+
+            //ask the user to place sub
+            place_boat(game, player, 2, "submarine");
+
+            //ask the user to place destroyer
+            place_boat(game, player, 3, "destroyer");
+
+            //ask the user to place carrier
+            place_boat(game, player, 4, "carrier");
+
+            return game;
+        }
+        static SaveGame place_boat(SaveGame game, int player, int length, string boat)
+        {
+            bool up = false;
+            string ?pos = "";
+
             while (!is_valid(pos))
             {
                 Console.Clear();
-                title(30);
+                title();
+                Console.WriteLine($"Player {game.players[player - 1]} placing boats");
                 show_board(game, player);
-                Console.WriteLine(
-                    "Placing dingy (1 tile)\n\n" +
+                Console.Write($"Placing {boat} ({length}x1 tiles)\n\n"+
                     "Enter Coordinates for boat: ");
                 pos = Console.ReadLine();
             }
-            
-            return game;
-        }
-        static SaveGame place_boat(SaveGame game, int player, int i, int j, int length, bool up)
-        {
+
+            int[] converted_pos = pos_to_int(pos);
+
+            if (length != 1)
+            {
+                Console.Clear();
+                title();
+                Console.WriteLine($"Player {game.players[player - 1]} placing boats");
+                show_board(game, player);
+                Console.WriteLine($"\nPlacing {boat} ({length}x1 tiles)\n\n" +
+                "What direction should the boat go in? (up or right): ");
+                if (Console.ReadLine() == "up") { up = true; } else { up = false; }
+            }
+
+
             for (int k = 0; k < length; k++)
             {
                 if (up)
                 {
-                    game.gameboard[player - 1, i + k, j] = '@';
+                    game.gameboard[player - 1, converted_pos[0] - k, converted_pos[1]] = '@';
                 }
                 if (!up)
                 {
-                    game.gameboard[player - 1, i, j + k] = '@';
+                    game.gameboard[player - 1, converted_pos[0], converted_pos[1] + k] = '@';
                 }
             }
             return game;
@@ -299,7 +333,7 @@ namespace BattleShips
         }
         static void show_board(SaveGame game, int player)
         {
-            Console.WriteLine("   1 2 3 4 5 6 7 8 9 0");
+            Console.WriteLine("\n   1 2 3 4 5 6 7 8 9 0");
             for (int i = 0; i < 10; i++)
             {
                 Console.Write(GetAlphabetLetter(i + 1) + "  ");
@@ -309,6 +343,7 @@ namespace BattleShips
                 }
                 Console.Write("\n");
             }
+            Console.WriteLine();
         }
 
 
@@ -422,7 +457,7 @@ namespace BattleShips
         {
             if (char.IsLetter(letter))
             {
-                return (letter - 'a') + 1;
+                return (letter - 'a');
             }
             else
             {
@@ -455,7 +490,7 @@ namespace BattleShips
         }
         static int[] pos_to_int(string pos)
         {
-            return [GetAlphabetNumber(pos[0]), pos[1]];
+            return [GetAlphabetNumber(pos[0]), int.Parse(pos[1].ToString()) - 1];
         }
     }
     class SaveGame()
