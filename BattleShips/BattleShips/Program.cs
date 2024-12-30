@@ -15,9 +15,7 @@ namespace BattleShips
     {
         static void Main(string[] args)
         {
-            //while (true) { Do_Choice(MenuScreen()); }
-            SaveGame game = new SaveGame();
-            Console.Write(game.gameboard.GetLength(0));
+            while (true) { Do_Choice(MenuScreen()); }
         }
 
         //Main Procedures
@@ -470,11 +468,11 @@ namespace BattleShips
                 }
 
                 // Write each value of the Item object to the binary file
-                for (int n = 0; n < game.gameboard.GetLength(1); n++)
+                for (int n = 0; n < game.gameboard.GetLength(0); n++)
                 {
-                    for (int i = 0; i < 10; i++)
+                    for (int i = 0; i < game.gameboard.GetLength(1); i++)
                     {
-                        for (int j = 0; j < 10; j++)
+                        for (int j = 0; j < game.gameboard.GetLength(2); j++)
                         {
                             writer.Write(game.gameboard[n, i, j]);
                         }
@@ -493,13 +491,13 @@ namespace BattleShips
                 SaveGame game = new SaveGame();
 
                 game.turn = reader.ReadUInt16();
-                for (int n = 0; n < 2; n++) { game.players[n] = reader.ReadString(); }
+                for (int n = 0; n < game.players.GetLength(0); n++) { game.players[n] = reader.ReadString(); }
                 // Read each value of the game object from the binary file
-                for (int n = 0; n < 2; n++)
+                for (int n = 0; n < game.gameboard.GetLength(0); n++)
                 {
-                    for (int i = 0; i < 10; i++)
+                    for (int i = 0; i < game.gameboard.GetLength(1); i++)
                     {
-                        for (int j = 0; j < 10; j++)
+                        for (int j = 0; j < game.gameboard.GetLength(2); j++)
                         {
                             game.gameboard[n, i, j] = reader.ReadChar();
                         }
