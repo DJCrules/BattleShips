@@ -15,6 +15,7 @@ namespace BattleShips
         static void Main(string[] args)
         {
             while (true) { Do_Choice(MenuScreen()); }
+            //test
         }
 
         //Main Procedures
@@ -303,7 +304,7 @@ namespace BattleShips
                         title();
                         Console.WriteLine($"Player {game.players[player - 1]} placing boats");
                         show_board(game, player);
-                        Console.WriteLine($"\nPlacing {boat} ({length}x1 tiles)\n\n" +
+                        Console.WriteLine($"Placing {boat} ({length}x1 tiles)\n\n" +
                         "What direction should the boat go in? (up or right): ");
                         if (Console.ReadLine() == "up") { up = true; } else { up = false; }
                     }
