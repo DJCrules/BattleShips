@@ -14,303 +14,328 @@ namespace BattleShips
     {
         static void Main(string[] args)
         {
-            //while (true) { Do_Choice(MenuScreen()); }
-
-            SaveGame game = Initialise_Game(["", ""], 1);
-            place_boats(game, 1);
+            while (true) { Do_Choice(MenuScreen()); }
         }
 
         //Main Procedures
-        static SaveGame Initialise_Game(string[] players, int ID)
-        {
-            //Making a clean board
-            SaveGame game = new SaveGame();
-            game.turn = 0;
-            for (int n = 0; n < 2; n++)
+            static SaveGame Initialise_Game(string[] players, int ID)
             {
-                for (int i = 0; i < 10; i++)
+                //Making a clean board
+                SaveGame game = new SaveGame();
+                game.turn = 0;
+                for (int n = 0; n < 2; n++)
                 {
-                    for (int j = 0; j < 10; j++)
+                    for (int i = 0; i < 10; i++)
                     {
-                        game.gameboard[n, i, j] = '~';
+                        for (int j = 0; j < 10; j++)
+                        {
+                            game.gameboard[n, i, j] = '~';
+                        }
                     }
                 }
+                game.started = false;
+                game.players = players;
+                game.ID = ID;
+                return game;
             }
-            game.started = false;
-            game.players = players;
-            game.ID = ID;
-            return game;
-        }
-        static string[] Intro()
-        {
-            Console.Clear();
-            title(20);
-            Console.WriteLine(
-                "Enter player names, if you would like \n" +
-                "to play against a computer, call one of \n" +
-                "the players 'computer'");
-
-            Console.Write("\n\nEnter First Player: ", Console.ForegroundColor);
-            string? player1 = Console.ReadLine();
-            Console.Write("\nEnter Second Player: ");
-            string? player2 = Console.ReadLine();
-            Console.Clear();
-            if (player1 != null && player2 != null)
-            {
-                return [player1, player2];
-            }
-            else
-            {
-                return ["player 1", "player 2"];
-            }
-        }
-        static int MenuScreen()
-        {
-            // Show the user a menu of the following options:
-            // 0 read instructions
-            // 1 create a new game
-            // 2 load an old game
-            // 3 remove an old game
-            // 4 exit from the game
-            // 101 secret choice to wipe save games
-            Console.Clear ();
-            title(25);
-            string choice = "";
-            while (choice == "" | choice == null)
+            static string[] Intro()
             {
                 Console.Clear();
-                title(0);
-                Console.WriteLine
-                ("==========Menu===========\n\n" +
-                 "0. Show Instructions\n" +
-                 "1. New Game\n" +
-                 "2. Load Game\n" +
-                 "3. Remove Save Game\n" +
-                 "4. Exit\n\n");
-                Console.Write("Enter choice: ");
-                choice = Console.ReadLine();
+                title(20);
+                Console.WriteLine(
+                    "Enter player names, if you would like \n" +
+                    "to play against a computer, call one of \n" +
+                    "the players 'computer'");
+
+                Console.Write("\n\nEnter First Player: ");
+                string? player1 = Console.ReadLine();
+                Console.Write("\nEnter Second Player: ");
+                string? player2 = Console.ReadLine();
+                Console.Clear();
+                if (player1 != null && player2 != null)
+                {
+                    return [player1, player2];
+                }
+                else
+                {
+                    return ["player 1", "player 2"];
+                }
             }
-            return int.Parse(choice);
-        }
-        static void Do_Choice(int choice)
-        {
-            switch (choice)
+            static int MenuScreen()
             {
-                //Instructions
-                case 0:
-                    Instructions();
-                    break;
-
-                //Start a new game
-                case 1:
-                    SaveGame newgame = new_game(Intro());
-                    newgame = stage_one(newgame);
-                    save_game(newgame);
+                // Show the user a menu of the following options:
+                // 0 read instructions
+                // 1 create a new game
+                // 2 load an old game
+                // 3 remove an old game
+                // 4 exit from the game
+                // 101 secret choice to wipe save games
+                Console.Clear ();
+                title(10);
+                string choice = "";
+                while (choice == "" | choice == null)
+                {
                     Console.Clear();
-                    title(10);
-                    Console.WriteLine($"\nSaved game as SaveGame{newgame.ID}.bin\n\nPress enter to return to menu");
-                    Console.ReadLine();
-                    break;
-
-                //Load an old game
-                case 2:
-                    List<string> games = fetch_games();
-                    if (games.Any())
-                    {
-                        Console.WriteLine();
-                        foreach (string game in games)
-                        {
-                            Console.WriteLine(game);
-                        }
-                        Console.Write("\n\nWhich game number to play? ");
-                        string game_number = Console.ReadLine();
-                        if (game_number != null)
-                        {
-                            stage_one(load_game(int.Parse(game_number)));
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine("No saved games");
-                        Console.ReadLine();
-                    }
-                    break;
-
-                //Delete an old game
-                case 3:
-                    games = fetch_games();
-                    if (games.Any())
-                    {
-                        Console.WriteLine();
-                        foreach (string game in games)
-                        {
-                            Console.WriteLine(game);
-                        }
-                        Console.Write("\n\nWhich game number to delete? ");
-                        string game_number = Console.ReadLine();
-                        if (game_number != null)
-                        {
-                            File.Delete($"SaveGame{game_number}.bin");
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine("\nNo saved games");
-                        Console.ReadLine();
-                    }
-                    break;
-
-                //Exit
-                case 4:
-                    System.Environment.Exit(0);
-                    break;
-
-                //Clear all games (secret)
-                case 101:
-                    Console.WriteLine("Are you sure???");
-                    if (Console.ReadLine() == "yes")
-                    { clear_games(); }
-                    break;
+                    title(0);
+                    Console.WriteLine
+                    ("==========Menu===========\n\n" +
+                     "0. Show Instructions\n" +
+                     "1. New Game\n" +
+                     "2. Load Game\n" +
+                     "3. Remove Save Game\n" +
+                     "4. Exit\n\n");
+                    Console.Write("Enter choice: ");
+                    choice = Console.ReadLine();
+                }
+                return int.Parse(choice);
             }
-        }
-        static void Instructions()
-        {
-            Console.Clear();
-            title(20);
-            Console.WriteLine(
-                "Battleships is a game in which both you and your opponent have ships in your friendly waters\n" +
-                "You can only see your friendly waters but you can attempt to strateigically bomb the enemy boats\n" +
-                "The first player to have successfully bombed and sunk all of the enemy boats wins the game\n\n" +
-                "You can play against a computer if you want, the easy mode is entirely random, and the harder\n" +
-                "mode uses a simple algorithm.");
-            Console.Write("\n\nGood luck, press enter to return to the menu.");
-            Console.ReadLine();
-        }
+            static void Do_Choice(int choice)
+            {
+                switch (choice)
+                {
+                    //Instructions
+                    case 0:
+                        Instructions();
+                        break;
+
+                    //Start a new game
+                    case 1:
+                        SaveGame newgame = new_game(Intro());
+                        newgame = stage_one(newgame);
+                        save_game(newgame);
+                        Console.Clear();
+                        title(10);
+                        Console.WriteLine($"\nSaved game as SaveGame{newgame.ID}.bin\n\nPress enter to return to menu");
+                        Console.ReadLine();
+                        break;
+
+                    //Load an old game
+                    case 2:
+                        List<string> games = fetch_games();
+                        if (games.Any())
+                        {
+                            Console.WriteLine();
+                            foreach (string game in games)
+                            {
+                                Console.WriteLine(game);
+                            }
+                            Console.Write("\n\nWhich game number to play? ");
+                            string game_number = Console.ReadLine();
+
+                            if (int.TryParse(game_number, out int num))
+                            {
+                                stage_one(load_game(num));
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("No saved games");
+                            Console.ReadLine();
+                        }
+                        break;
+
+                    //Delete an old game
+                    case 3:
+                        games = fetch_games();
+                        if (games.Any())
+                        {
+                            Console.WriteLine();
+                            foreach (string game in games)
+                            {
+                                Console.WriteLine(game);
+                            }
+                            Console.Write("\n\nWhich game number to delete? ");
+                            string game_number = Console.ReadLine();
+                            if (game_number != null)
+                            {
+                                File.Delete($"SaveGame{game_number}.bin");
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("\nNo saved games");
+                            Console.ReadLine();
+                        }
+                        break;
+
+                    //Exit
+                    case 4:
+                        System.Environment.Exit(0);
+                        break;
+
+                    //Clear all games (secret)
+                    case 101:
+                        Console.WriteLine("Are you sure???");
+                        if (Console.ReadLine() == "yes")
+                        { clear_games(); }
+                        break;
+                }
+            }
+            static void Instructions()
+            {
+                Console.Clear();
+                title(5);
+                Console.WriteLine(
+                    "Battleships is a game in which both you and your opponent have ships in your friendly waters\n" +
+                    "You can only see your friendly waters but you can attempt to strateigically bomb the enemy boats\n" +
+                    "The first player to have successfully bombed and sunk all of the enemy boats wins the game\n\n" +
+                    "You can play against a computer if you want, the easy mode is entirely random, and the harder\n" +
+                    "mode uses a simple algorithm.");
+                Console.Write("\n\nGood luck, press enter to return to the menu.");
+                Console.ReadLine();
+            }
 
 
         //Gameplay Procedures
-        static SaveGame stage_one(SaveGame game)
-        {
-            if (game.started) { stage_two(game); }
 
-            if (game.players[0] != "computer")
-            {
-                place_boats(game, 1);
-            }
-            if (game.players[1] != "computer")
+            //high tier
+                static SaveGame stage_one(SaveGame game)
+                {
+                    if (game.started) { stage_two(game); }
 
-            game.started = true;
-            game = stage_two(game);
-            return game;
-        }
-        static SaveGame stage_two(SaveGame game)
-        {
-            if (!game.started) { stage_one(game); }
+                    foreach (string player in game.players)
+                    {
+                        if (player.ToLower() == "computer")
+                        {
+                    
+                        }
+                        else
+                        {
+                            place_boats(game, Array.IndexOf(game.players, player) + 1);
+                        }
+                    }
 
-            if (game.players[0] == "computer")
-            {
-                game = computer_turn(game);
-            }
-            else
-            {
-                game = player_turn(game, 1);
-            }
-            return game;
-        }
-        static SaveGame computer_turn(SaveGame game)
-        {
-            if (!game.started) { stage_one(game); }
 
-            return game;
-        }
-        static SaveGame player_turn(SaveGame game, int player)
-        {
-            if (!game.started) { stage_one(game); }
+                    game.started = true;
+                    game = stage_two(game);
+                    return game;
+                }
+                static SaveGame stage_two(SaveGame game)
+                {
+                    if (!game.started) { stage_one(game); }
 
-            title(0);
-            show_board(game, player);
-            Console.Write("\nAim for:  ");
+                    if (game.players[0] == "computer")
+                    {
+                        game = computer_turn(game);
+                    }
+                    else
+                    {
+                        game = player_turn(game, 1);
+                    }
+                    return game;
+                }
 
-            int[] pos = pos_to_int(Console.ReadLine());
+            //medium tier
+                static SaveGame computer_turn(SaveGame game)
+                    {
+                        if (!game.started) { stage_one(game); }
 
-            hit_square(game, player, pos[0], pos[1]);
+                        return game;
+                    }
+                static SaveGame place_boats(SaveGame game, int player)
+                {
+                    //ask the user to place dingy
+                    place_boat(game, player, 1, "dingy");
+
+                    //ask the user to place sub
+                    place_boat(game, player, 2, "submarine");
+
+                    //ask the user to place destroyer
+                    place_boat(game, player, 3, "destroyer");
+
+                    //ask the user to place carrier
+                    place_boat(game, player, 4, "carrier");
+
+                    return game;
+                }
+                static SaveGame player_turn(SaveGame game, int player)
+                    {
+                        if (!game.started) { stage_one(game); }
+
+                        title(0);
+                        show_board(game, player);
+                        Console.Write("\nAim for:  ");
+
+                        int[] pos = pos_to_int(Console.ReadLine());
+
+                        hit_square(game, player, pos[0], pos[1]);
                                    
-            show_board(game, player);
+                        show_board(game, player);
 
-            game.turn++;
-            return game;
-        }
-        static SaveGame hit_square(SaveGame game, int board, int i, int j)
-        {
-            if (game.gameboard[board - 1, i, j] == '~')
-            {
-                game.gameboard[board - 1, i, j] = 'X';
-            }
-            if (game.gameboard[board - 1, i, j] == '@')
-            {
-                game.gameboard[board - 1, i, j] = '!';
-            }
-            return game;
-        }
-        static SaveGame place_boats(SaveGame game, int player)
-        {
-            //ask the user to place dingy
-            place_boat(game, player, 1, "dingy");
+                        game.turn++;
+                        return game;
+                    }
 
-            //ask the user to place sub
-            place_boat(game, player, 2, "submarine");
-
-            //ask the user to place destroyer
-            place_boat(game, player, 3, "destroyer");
-
-            //ask the user to place carrier
-            place_boat(game, player, 4, "carrier");
-
-            return game;
-        }
-        static SaveGame place_boat(SaveGame game, int player, int length, string boat)
-        {
-            bool up = false;
-            string ?pos = "";
-
-            while (!is_valid(pos))
-            {
-                Console.Clear();
-                title();
-                Console.WriteLine($"Player {game.players[player - 1]} placing boats");
-                show_board(game, player);
-                Console.Write($"Placing {boat} ({length}x1 tiles)\n\n"+
-                    "Enter Coordinates for boat: ");
-                pos = Console.ReadLine();
-            }
-
-            int[] converted_pos = pos_to_int(pos);
-
-            if (length != 1)
-            {
-                Console.Clear();
-                title();
-                Console.WriteLine($"Player {game.players[player - 1]} placing boats");
-                show_board(game, player);
-                Console.WriteLine($"\nPlacing {boat} ({length}x1 tiles)\n\n" +
-                "What direction should the boat go in? (up or right): ");
-                if (Console.ReadLine() == "up") { up = true; } else { up = false; }
-            }
-
-
-            for (int k = 0; k < length; k++)
-            {
-                if (up)
+            //low tier
+                static SaveGame hit_square(SaveGame game, int board, int i, int j)
                 {
-                    game.gameboard[player - 1, converted_pos[0] - k, converted_pos[1]] = '@';
+                    if (game.gameboard[board - 1, i, j] == '~')
+                    {
+                        game.gameboard[board - 1, i, j] = 'X';
+                    }
+                    if (game.gameboard[board - 1, i, j] == '@')
+                    {
+                        game.gameboard[board - 1, i, j] = '!';
+                    }
+                    return game;
                 }
-                if (!up)
+                static SaveGame place_boat(SaveGame game, int player, int length, string boat)
                 {
-                    game.gameboard[player - 1, converted_pos[0], converted_pos[1] + k] = '@';
+                    bool up = false;
+                    string ?pos = "";
+
+                    while (!is_valid(pos))
+                    {
+                        Console.Clear();
+                        title();
+                        Console.WriteLine($"Player {game.players[player - 1]} placing boats");
+                        show_board(game, player);
+                        Console.Write($"Placing {boat} ({length}x1 tiles)\n\n"+
+                            "Enter Coordinates for boat: ");
+                        pos = Console.ReadLine();
+                    }
+
+                    int[] converted_pos = pos_to_int(pos);
+
+                    if (length != 1)
+                    {
+                        Console.Clear();
+                        title();
+                        Console.WriteLine($"Player {game.players[player - 1]} placing boats");
+                        show_board(game, player);
+                        Console.WriteLine($"\nPlacing {boat} ({length}x1 tiles)\n\n" +
+                        "What direction should the boat go in? (up or right): ");
+                        if (Console.ReadLine() == "up") { up = true; } else { up = false; }
+                    }
+
+                    try
+                    {
+                        for (int k = 0; k < length; k++)
+                        {
+                            if ((game.gameboard[player - 1, converted_pos[0], converted_pos[1] + k] == '~' && !up) ||
+                                (game.gameboard[player - 1, converted_pos[0] - k, converted_pos[1]] == '~' && up)) 
+                            { continue; }
+                            else { throw new Exception(); }
+                        }
+                        for (int k = 0; k < length; k++)
+                        {
+                            if (up)
+                            {
+                                game.gameboard[player - 1, converted_pos[0] - k, converted_pos[1]] = '@';
+                            }
+                            if (!up)
+                            {
+                                game.gameboard[player - 1, converted_pos[0], converted_pos[1] + k] = '@';
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        place_boat(game, player, length, boat);
+                    }
+
+                    return game;
                 }
-            }
-            return game;
-        }
 
 
         //Pretty Procedures
@@ -357,6 +382,11 @@ namespace BattleShips
             using (BinaryWriter writer = new BinaryWriter(File.Open(filename, FileMode.Create)))
             {
                 writer.Write(game.turn);
+                foreach (string player in game.players)
+                {
+                    writer.Write(player);
+                }
+
                 // Write each value of the Item object to the binary file
                 for (int n = 0; n < 2; n++)
                 {
@@ -368,10 +398,6 @@ namespace BattleShips
                         }
                     }
                 }
-                foreach (string player in game.players)
-                {
-                    writer.Write(player);
-                }
                 writer.Write(game.started);
                 writer.Write(game.ID);
             }
@@ -381,10 +407,11 @@ namespace BattleShips
             string filename = $"SaveGame{game_number}.bin";
             using (BinaryReader reader = new BinaryReader(File.Open(filename, FileMode.Open)))
             {
-                // Declare an Item object of type SaveGame
+                // Declare SaveGame
                 SaveGame game = new SaveGame();
 
                 game.turn = reader.ReadUInt16();
+                for (int n = 0; n < 2; n++) { game.players[n] = reader.ReadString(); }
                 // Read each value of the game object from the binary file
                 for (int n = 0; n < 2; n++)
                 {
@@ -396,7 +423,6 @@ namespace BattleShips
                         }
                     }
                 }
-                for (int n = 0; n < 2; n++) { game.players[n] = reader.ReadString(); }
                 game.started = reader.ReadBoolean();
                 game.ID = reader.ReadUInt16();
                 // Return the game object
@@ -434,6 +460,7 @@ namespace BattleShips
 
             while (File.Exists(filename))
             {
+                filename = $"SaveGame{ID}.bin";
                 ID++;
             }
             SaveGame game = Initialise_Game(players, ID);
@@ -493,7 +520,7 @@ namespace BattleShips
             return [GetAlphabetNumber(pos[0]), int.Parse(pos[1].ToString()) - 1];
         }
     }
-    class SaveGame()
+    struct SaveGame()
     {
         public int turn = 0;
         public string[] players = new string[2];
