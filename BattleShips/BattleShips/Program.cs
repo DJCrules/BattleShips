@@ -197,22 +197,18 @@ namespace BattleShips
         static SaveGame stage_one(SaveGame game)
         {
             if (game.started) { return stage_two(game); }
-
             foreach (string player in game.players)
             {
-                if (player.ToLower() == "computer")
-                {
-                    
-                }
-                else
-                {
-                    place_boats(game, Array.IndexOf(game.players, player) + 1);
-                    Console.Write($"\n\nPlayer {player}'s boats placed" +
-                        $"\n\npress enter to continue: ");
-                }
+                int num = Array.IndexOf(game.players, player) + 1;
+                place_boats(game, num);
+
+                title();
+                show_board(game, num);
+                Console.Write($"\n\n{player}'s boats placed" +
+
+                    $"\n\nenter q to quit or enter to continue: ");
+                if (Console.ReadLine() == "q") { return game; }
             }
-
-
             game.started = true;
             game = stage_two(game);
             return game;
@@ -232,6 +228,7 @@ namespace BattleShips
                     {
                         int player_number = Array.IndexOf(game.players, player) + 1;
                         computer_turn(game, player_number);
+                        title();
                         game.turn++;
                     }
                     else
@@ -245,10 +242,10 @@ namespace BattleShips
             return game;
         }
 
-        //medium tier
+            //medium tier
         static SaveGame place_boats(SaveGame game, int player)
         {
-            if (game.players[player - 1] != "computer")
+            if (game.players[player - 1].ToLower() != "computer")
             {
                 //ask the user to place dingy
                 game = place_boat(game, player, 1, "dingy");
@@ -386,7 +383,7 @@ namespace BattleShips
             bool up = false;
 
             Random random = new Random();
-            up = random.Next(2) == 1;
+            up = random.Next(1) == 1;
             converted_pos = [random.Next(9), random.Next(9)];
 
             try
@@ -412,7 +409,7 @@ namespace BattleShips
             }
             catch
             {
-                random_boat(game, player, length);
+                return random_boat(game, player, length);
             }
             return game;
         }
