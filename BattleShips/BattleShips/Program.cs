@@ -364,7 +364,7 @@ namespace BattleShips
         }
         static bool can_place_boat(SaveGame game, int player, int[] pos, int length, bool up)
         {
-            int boardSize = game.gameboard.GetLength(1); // Assuming square board
+            int boardSize = game.gameboard.GetLength(1); 
             int row = pos[0], col = pos[1];
 
             for (int k = 0; k < length; k++)
